@@ -15,20 +15,20 @@ spec:
   template:
     spec:
       serviceAccountName: client-sample-app
-      # volumes:
-      #   - name: client-secret
-      #     csi:
-      #       driver: secrets-store.csi.k8s.io
-      #       readOnly: true
-      #       volumeAttributes:
-      #         secretProviderClass: "client-sample-app-secret"
-      # containers:
+      volumes:
+        - name: client-secret
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "client-sample-app-secret"
+      containers:
         - name: client-sample
           image: 658721656416.dkr.ecr.ap-southeast-1.amazonaws.com/nodejs-tutorialspoint-peerasilp:latest
-          # volumeMounts:
-          #   - name: client-secret
-          #     mountPath: "/mnt/secrets"
-          #     readOnly: true
+          volumeMounts:
+            - name: client-secret
+              mountPath: "/mnt/secrets"
+              readOnly: true
           # resources:
           #   requests:
           #     memory: 128Mi
