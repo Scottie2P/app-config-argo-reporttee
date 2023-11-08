@@ -1,0 +1,20 @@
+helm:
+  parameters:
+  - name: components.api.image.repository
+    value: docker.io/datawow/prime-text
+    forcestring: true
+  - name: components.api.image.sha
+    value: api-stg-v1.0.3
+    forcestring: true
+  - name: components.predictor.image.repository
+    value: docker.io/datawow/prime-text
+    forcestring: true
+  - name: components.predictor.image.sha
+    value: predictor-stg-v1.0.2
+    forcestring: true
+  - name: components.worker.image.repository
+    value: docker.io/datawow/prime-text
+    forcestring: true
+  - name: components.worker.image.sha
+    value: worker-stg-v1.0.3
+    forcestring: true

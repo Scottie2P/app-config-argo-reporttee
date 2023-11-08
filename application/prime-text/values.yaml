@@ -1,0 +1,217 @@
+# Default values for prime-text.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  pullPolicy: Always
+
+environmentVariables:
+  prime-text-secret:
+    type: secret
+    keys:
+      - API_KEY
+      - NEW_RELIC_LICENSE_KEY
+
+  prime-text:
+    type: configmap
+    keys:
+      - APP_ENV
+      - NEW_RELIC_ENVIRONMENT
+      - LOG_LEVEL
+      - MONGO_URI
+      - MONGO_COLLECTION
+      - MONGO_DB
+      - SLACK_WEBHOOK_URL
+      - SENTRY_DSN
+      - KAFKA_HOST
+      - KAFKA_PREDICTION_TOPIC
+      - KAFKA_POSTBACK_TOPIC
+      - REQUEST_TIMEOUT
+      - POSTBACK_RETRIES
+      - REDIS_HOST
+      - REDIS_PORT
+      - REDIS_CACHE_DB
+      - REDIS_KEY_PREFIX
+      - REDIS_CACHE_TIME
+      - SQS_PREDICTOR_QUEUE
+      - SQS_POSTBACK_QUEUE
+      - SQS_PROCESSED_QUEUE
+
+imagePullSecrets:
+  - name: dockersecret
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: http
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    ingress.kubernetes.io/rewrite-target: "/"
+    nginx/client_max_body_size: 10m
+    nginx.ingress.kubernetes.io/proxy-body-size: 10m
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+  hosts:
+    - host: ""
+      paths:
+        - path: /
+
+components:
+  api:
+    image:
+      repository: docker.io/datawow/prime-text
+      sha: 08d48626475e024370dfe50623a63951b004221b
+      pullPolicy: Always
+    environmentVariables: {}
+    command:
+      [
+        "newrelic-admin",
+        "run-program",
+        "gunicorn",
+        "-c",
+        "gunicorn.conf.py",
+        "wsgi:app",
+      ]
+    env:
+      - name: NEW_RELIC_CONFIG_FILE
+        value: newrelic.ini
+    ingress: true
+    ports:
+      - name: http
+        containerPort: 5000
+        protocol: TCP
+    readinessProbe:
+      httpGet:
+        path: /
+        port: 5000
+        scheme: HTTP
+      periodSeconds: 30
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 5000
+        scheme: HTTP
+      periodSeconds: 30
+    resources:
+      requests:
+        cpu: 20m
+        memory: 128Mi
+      limits:
+        cpu: 300m
+        memory: 256Mi
+    replicaCount: 1
+    nodeSelector:
+      datawow.io/group: general
+      datawow.io/architecture: x86
+    tolerations: []
+    affinity: {}
+    topologySpreadConstraints:
+      enabled: true
+      maxSkew: 2
+      topologyKey: kubernetes.io/hostname
+
+  predictor:
+    image:
+      repository: docker.io/datawow/prime-text
+      sha: 08d48626475e024370dfe50623a63951b004221b
+      pullPolicy: Always
+    environmentVariables: {}
+    ingress: false
+    readinessProbe:
+      exec:
+        command:
+          - cat
+          - /tmp/ready
+    livenessProbe:
+      exec:
+        command:
+          - cat
+          - /tmp/ready
+    resources:
+      requests:
+        cpu: 700m
+        memory: 1Gi
+      limits:
+        cpu: 1100m
+        memory: 2Gi
+    replicaCount: 1
+    nodeSelector:
+      datawow.io/group: general
+      datawow.io/architecture: x86
+    tolerations: []
+    affinity: {}
+    topologySpreadConstraints:
+      enabled: true
+      maxSkew: 3
+      topologyKey: kubernetes.io/hostname
+    hpa:
+      minReplicas: 1
+      maxReplicas: 1
+      metrics:
+        - type: Resource
+          resource:
+            name: cpu
+            target:
+              type: Utilization
+              averageUtilization: 80
+
+  worker:
+    image:
+      repository: docker.io/datawow/prime-text
+      sha: 08d48626475e024370dfe50623a63951b004221b
+      pullPolicy: Always
+    environmentVariables: {}
+    ingress: false
+    readinessProbe:
+      exec:
+        command:
+          - cat
+          - /tmp/ready
+    livenessProbe:
+      exec:
+        command:
+          - cat
+          - /tmp/ready
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 192Mi
+    replicaCount: 1
+    nodeSelector:
+      datawow.io/group: general
+      datawow.io/architecture: x86
+    tolerations: []
+    affinity: {}
+    topologySpreadConstraints:
+      enabled: true
+      maxSkew: 4
+      topologyKey: kubernetes.io/hostname
+    hpa:
+      minReplicas: 1
+      maxReplicas: 1
+      metrics:
+        - type: External
+          external:
+            metric:
+              name: textai_postback_100_message_per_sec
+            target:
+              type: AverageValue
+              averageValue: 500
+        - type: External
+          external:
+            metric:
+              name: textai_postback_queue
+            target:
+              type: AverageValue
+              averageValue: 200
