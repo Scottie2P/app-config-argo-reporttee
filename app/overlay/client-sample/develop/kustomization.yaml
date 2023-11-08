@@ -5,6 +5,7 @@ bases:
 - ../../../base/client-sample-app
 patchesStrategicMerge:
 - deployment.yaml
+- ingress.yaml
 - sa.yaml
 resources:
 - secret.yaml
@@ -12,5 +13,5 @@ resources:
 #   - configuration/sealed-secret-config.yaml
 
 images:
-- name: 123456789385.dkr.ecr.ap-southeast-1.amazonaws.com/client-staging-sample-app
-  newTag: v1.0.11
+- name: 658721656416.dkr.ecr.ap-southeast-1.amazonaws.com/nodejs-tutorialspoint-peerasilp
+  newTag: latest

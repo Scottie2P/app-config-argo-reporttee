@@ -26,8 +26,10 @@ spec:
           name: client-sample
           # imagePullPolicy: Always
           ports:
-            - containerPort: 80
+            - containerPort: 8081
               name: web
+      imagePullSecrets:
+        - name: ecrdockersecret
           # readinessProbe:
           #   httpGet:
           #     path: /ht
