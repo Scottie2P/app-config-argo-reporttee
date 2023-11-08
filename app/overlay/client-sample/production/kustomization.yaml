@@ -1,18 +1,17 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: production
-bases:
-- ../../../base/client-sample-app
-patchesStrategicMerge:
-- deployment.yaml
-- sa.yaml
-- ingress.yaml
 resources:
 - secret.yaml
 - cronjob.yaml
+- ../../../base/client-sample-app
 # configurations:
 #   - configuration/sealed-secret-config.yaml
 
 images:
-- name: 123456789385.dkr.ecr.ap-southeast-1.amazonaws.com/client-staging-sample-app
-  newTag: v1.0.11
+- name: 658721656416.dkr.ecr.ap-southeast-1.amazonaws.com/nodejs-tutorialspoint-peerasilp
+  newTag: latest
+patches:
+- path: deployment.yaml
+- path: sa.yaml
+- path: ingress.yaml
