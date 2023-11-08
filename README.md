@@ -20,4 +20,4 @@ kubectl port-forward svc/argocd-server -n argocd 8080:443
 helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace 
 ```
 
-..
+
