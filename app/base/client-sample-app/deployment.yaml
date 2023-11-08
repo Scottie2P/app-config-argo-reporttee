@@ -3,37 +3,23 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: client-sample-app
+    app: client-sample
   name: client-sample
 spec:
-  revisionHistoryLimit: 2
   replicas: 1
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1 # how many pods we can add at a time
-      maxUnavailable: 0 # maxUnavailable define how many pods can be unavailable
   selector:
     matchLabels:
-      app: client-sample-app
+      app: client-sample
   template:
     metadata:
       labels:
-        app: client-sample-app
+        app: client-sample
     spec:
       containers:
-        - image: 123456789385.dkr.ecr.ap-southeast-1.amazonaws.com/client-staging-sample-app:v1.0.0
+        - image: 658721656416.dkr.ecr.ap-southeast-1.amazonaws.com/nodejs-tutorialspoint-peerasilp:latest
           name: client-sample
-          # imagePullPolicy: Always
+          imagePullPolicy: Always
           ports:
             - containerPort: 8081
-              name: web
       imagePullSecrets:
         - name: ecrdockersecret
-          # readinessProbe:
-          #   httpGet:
-          #     path: /ht
-          #     port: web
-          #   initialDelaySeconds: 80
-          #   failureThreshold: 2
-          #   periodSeconds: 10
