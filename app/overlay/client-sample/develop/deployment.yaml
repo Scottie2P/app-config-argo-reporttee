@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: client-sample-app
+    app: client-sample
   name: client-sample
 spec:
   replicas: 1
@@ -11,31 +11,30 @@ spec:
     type: RollingUpdate
     rollingUpdate:
       maxSurge: 1 # how many pods we can add at a time
-      maxUnavailable: 0
   template:
     spec:
-      serviceAccountName: client-sample-app
-      volumes:
-        - name: client-secret
-          csi:
-            driver: secrets-store.csi.k8s.io
-            readOnly: true
-            volumeAttributes:
-              secretProviderClass: "client-sample-app-secret"
+      # serviceAccountName: client-sample
+      # volumes:
+      #   - name: client-secret
+      #     csi:
+      #       driver: secrets-store.csi.k8s.io
+      #       readOnly: true
+      #       volumeAttributes:
+      #         secretProviderClass: "client-sample-app-secret"
       containers:
         - name: client-sample
           image: 658721656416.dkr.ecr.ap-southeast-1.amazonaws.com/nodejs-tutorialspoint-peerasilp:latest
-          volumeMounts:
-            - name: client-secret
-              mountPath: "/mnt/secrets"
-              readOnly: true
-          # resources:
-          #   requests:
-          #     memory: 128Mi
-          #     cpu: 100m
-          #   limits:
-          #     memory: 768Mi
-          #     cpu: 800m
+          # volumeMounts:
+          #   - name: client-secret
+          #     mountPath: "/mnt/secrets"
+          #     readOnly: true
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 100m
+            limits:
+              memory: 256Mi
+              cpu: 200m
           # envFrom:
           #   - secretRef:
           #       name: sample-shopping-secret

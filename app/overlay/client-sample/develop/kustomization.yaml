@@ -6,7 +6,7 @@ bases:
 patchesStrategicMerge:
 - deployment.yaml
 - ingress.yaml
-- sa.yaml
+# - sa.yaml
 resources:
 - secret.yaml
 # configurations:
