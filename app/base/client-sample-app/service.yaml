@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: client-sample-app
+  name: client-sample-svc
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: client-sample-app
+  type: ClusterIP

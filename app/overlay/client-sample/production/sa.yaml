@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: client-sample-app
+  labels:
+    app: client-sample-app
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::123456789385:role/client-staging-client-sample-app-eks-sa-role

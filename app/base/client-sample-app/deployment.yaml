@@ -1,0 +1,37 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: client-sample-app
+  name: client-sample
+spec:
+  revisionHistoryLimit: 2
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1 # how many pods we can add at a time
+      maxUnavailable: 0 # maxUnavailable define how many pods can be unavailable
+  selector:
+    matchLabels:
+      app: client-sample-app
+  template:
+    metadata:
+      labels:
+        app: client-sample-app
+    spec:
+      containers:
+        - image: 123456789385.dkr.ecr.ap-southeast-1.amazonaws.com/client-staging-sample-app:v1.0.0
+          name: client-sample
+          # imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+              name: web
+          # readinessProbe:
+          #   httpGet:
+          #     path: /ht
+          #     port: web
+          #   initialDelaySeconds: 80
+          #   failureThreshold: 2
+          #   periodSeconds: 10
