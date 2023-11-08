@@ -7,27 +7,10 @@ metadata:
   name: client-sample
 spec:
   replicas: 1
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1 # how many pods we can add at a time
   template:
     spec:
-      # serviceAccountName: client-sample
-      # volumes:
-      #   - name: client-secret
-      #     csi:
-      #       driver: secrets-store.csi.k8s.io
-      #       readOnly: true
-      #       volumeAttributes:
-      #         secretProviderClass: "client-sample-app-secret"
       containers:
         - name: client-sample
-          image: 658721656416.dkr.ecr.ap-southeast-1.amazonaws.com/nodejs-tutorialspoint-peerasilp:latest
-          # volumeMounts:
-          #   - name: client-secret
-          #     mountPath: "/mnt/secrets"
-          #     readOnly: true
           resources:
             requests:
               memory: 128Mi
@@ -37,11 +20,3 @@ spec:
               cpu: 200m
           # envFrom:
           #   - secretRef:
-          #       name: sample-shopping-secret
-          # readinessProbe:
-          #   httpGet:
-          #     path: /ht
-          #     port: web
-          #   initialDelaySeconds: 30
-          #   failureThreshold: 2
-          #   periodSeconds: 10
